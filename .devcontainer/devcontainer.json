@@ -1,0 +1,9 @@
+{
+  "name": "CSCI-4610",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "extensions": [
+    "ms-vscode.cpptools"
+  ]
+}
