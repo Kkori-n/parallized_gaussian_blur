@@ -12,12 +12,12 @@
 #include "stb_image_write.h"
 
 double count = -1.0;
-double total_px = 0;
+double total_progress = 0;
 
 int progress(){
     count = count + 1.0;
-    //printf("\rPercent complete: %.2f%%", (count/total_px)*100);
-    printf("\rPercent complete:  |%.*s%.*s|  %.2f%%", int(((count/total_px)*100)/10), "**********",int(10-((count/total_px)*100)/10), "----------", (count/total_px)*100);
+    //printf("\rPercent complete: %.2f%%", (count/total_progress)*100);
+    printf("\rPercent complete:  |%.*s%.*s|  %.2f%%", int(((count/total_progress)*100)/10), "**********",int(10-((count/total_progress)*100)/10), "----------", (count/total_progress)*100);
     return 0;
 }
 
@@ -35,9 +35,16 @@ int main(int argc, char** argv) {
         output =argv[2];
     }
     bool devlog = false;
+    
     if(argc >= 5 && std::string(argv[4]) == "--dev") {
         devlog = true;
+        for (int i = 0; i < argc; i++) {
+        printf("argv[%d] = %s\n", i, argv[i]);
+        }
+        printf("\nDEVLOG ACTIVE\n\n");
         
+        printf("echo -e \"\\e[?25h\" <- to get cursor back if program terminates\n");
+        printf("Starting...\n\n");
     }
 
     
@@ -53,6 +60,12 @@ int main(int argc, char** argv) {
     if (!img) {
         std::printf("could not load %s\n", input);
         return 1;
+    }
+    
+    if(devlog){
+        total_progress = double(h)*2;
+        progress();
+        fputs("\e[?25l", stdout); /* hide the cursor */
     }
 
     int radius = (int)std::ceil(3.0 * sigma); //? standard value based off sigma (can be modified if needed)
@@ -88,19 +101,12 @@ int main(int argc, char** argv) {
 
     double t0 = omp_get_wtime();
     //* parallize the loops. Run thread for each pixle staticly.
-    if(devlog) {
-        printf("echo -e \"\\e[?25h\" <- to get cursor back if program terminates\n");
-        printf("Starting..");
-        total_px = double(h);
-        progress();
-        fputs("\e[?25l", stdout); /* hide the cursor */
-    }
+    
 
     #pragma omp parallel for schedule(dynamic)
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
             size_t pixel_idx = (static_cast<size_t>(y) * w + x) * channels;
-            
             for (int c = 0; c < channels; ++c) {
                 double acc = 0.0; //? var for accumulating the weight privately for each iteration
                 for (int dx = -radius; dx <= radius; ++dx) {

@@ -95,12 +95,10 @@ int main(int argc, char** argv) {
 
     #pragma omp parallel for schedule(dynamic)
     for (int y = 0; y < h; ++y) {
-        
         for (int x = 0; x < w; ++x) {
             for (int c = 0; c < channels; ++c) {
                 double acc = 0.0; //? var for accumulating the weight privately for each iteration
-
-                //?blur for each pixle
+                //? blur for each pixle
                 for (int dy = -radius; dy <= radius; ++dy) {
                 int yy = y + dy;
                 yy = (yy < 0) ? 0 : (yy >= h ? h - 1 : yy);
