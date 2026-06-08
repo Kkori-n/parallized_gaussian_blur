@@ -14,10 +14,17 @@
 double count = -1.0;
 double total_progress = 0;
 
-int progress(){
+int progress(bool x){
     count = count + 1.0;
     //printf("\rPercent complete: %.2f%%", (count/total_progress)*100);
     printf("\rPercent complete:  |%.*s%.*s|  %.2f%%", int(((count/total_progress)*100)/10), "**********",int(10-((count/total_progress)*100)/10), "----------", (count/total_progress)*100);
+    if(!x) {
+        printf("  -  1/2");
+    } else {
+        printf("  -  2/2");
+    }
+
+    printf("        ");
     return 0;
 }
 
@@ -63,8 +70,8 @@ int main(int argc, char** argv) {
     }
     
     if(devlog){
-        total_progress = double(h)*2;
-        progress();
+        total_progress = double(h);
+        progress(false);
         fputs("\e[?25l", stdout); /* hide the cursor */
     }
 
@@ -119,10 +126,13 @@ int main(int argc, char** argv) {
         }
         if (devlog) {
             #pragma omp critical
-            progress();
+            progress(false);
         }
     }
-
+    if(devlog) {
+        count = 0;
+        printf("\n\n");
+    }
     #pragma omp parallel for schedule(static)
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
@@ -140,7 +150,7 @@ int main(int argc, char** argv) {
         }
         if (devlog) {
             #pragma omp critical
-            progress();
+            progress(true);
         }
     }
     
