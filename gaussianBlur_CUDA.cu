@@ -111,6 +111,7 @@ int main(int argc, char** argv) {
     dim3 blockSize(16, 16);
     dim3 gridSize((w + blockSize.x - 1) / blockSize.x, (h + blockSize.y - 1) / blockSize.y, channels);
 
+    cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
 
