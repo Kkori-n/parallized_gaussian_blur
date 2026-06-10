@@ -5,5 +5,9 @@
   },
   "extensions": [
     "ms-vscode.cpptools"
+  ], 
+  "runArgs": [
+    "--gpus",
+    "all"
   ]
 }
