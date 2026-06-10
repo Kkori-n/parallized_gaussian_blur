@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
     if (devlog) printf("Loaded image: %s (Width: %d, Height: %d, Channels: %d)\n", input_path, w, h, channels);
 
     float* d_temp;
-    unsigned char* d_img, *d_out, *d_out;
+    unsigned char* d_img, *d_out;
     size_t img_size = (size_t)w * h * channels;
 
     CUDA_CHECK(cudaMalloc(&d_img, img_size));
