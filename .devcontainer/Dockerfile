@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     vim \
     python3 \
     python3-pip \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 ENV OMP_NUM_THREADS=4
